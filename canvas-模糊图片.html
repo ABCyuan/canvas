@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模糊图片</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="js/jquery-3.2.1.js"></script>
+</head>
+<body>
+<div id="blur-div">
+<img src="images/blur.jpg" alt="" id="blur-img">
+    <canvas id="canvas">
+    </canvas>
+    <a href="javascript:reset()" class="btn" id="btn-reset">reset</a>
+    <a href="javascript:show()" class="btn" id="btn-show">show</a>
+</div>
+</body>
+<script>
+    /*创建画布*/
+    var canvasWidth=400;
+    var canvasHeight=600;
+    var canvas=document.getElementById("canvas");
+    var context=canvas.getContext("2d");
+    canvas.width=canvasWidth;
+    canvas.height=canvasHeight;
+    /*再添一张照片*/
+    var image=new Image();
+    var clippregion={x:180,y:180,r:50}
+    var radius=50
+    image.src="images/blur.jpg"
+    image.onload=function () {
+        initCanvas();
+    };
+    /*小圆圈函数*/
+    function  initCanvas() {
+        clippregion={x:Math.random()*(canvas.width-2*radius)
+        +radius,y:Math.random()*(canvas.height-2*radius)
+        +radius,r:radius}
+        draw(image ,clippregion);
+    };
+    function setclippregion(clippregion) {
+        context.beginPath();
+        context.arc(clippregion.x,clippregion.y,clippregion.r,0,Math.PI*2,false);
+        context.clip();
+    };
+    function draw(image,clippregion) {
+        context.clearRect(0,0,canvas.width,canvas.height);
+        context.save();
+        setclippregion(clippregion);
+        context.drawImage(image,0,0);
+        context.restore();
+    };
+    /*显示函数*/
+    function show() {
+        var showr=setInterval(function () {
+            if(clippregion.r>1000){
+                clearInterval(showr)
+            }
+            clippregion.r += 20
+            draw(image, clippregion)
+        },30)
+    };
+    function reset() {
+        initCanvas()
+    }
+</script>
+</html>
